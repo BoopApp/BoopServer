@@ -188,7 +188,9 @@ class APIInitHandler(BaseHandler):
 
         position = tornado.escape.json_decode(self.request.body);
 
-        places = self.factual.table('places').search('').filters({'email': {'$blank': False}, 'website': {'$blank': False}, 'tel': {'$blank': False}}).geo(
+        #places = self.factual.table('places').search('').filters({'email': {'$blank': False}, 'website': {'$blank': False}, 'tel': {'$blank': False}}).geo(
+        #    factual.utils.circle(position['coords']['latitude'], position['coords']['longitude'], 2000)).sort('$distance:asc').include_count(True).data()
+        places = self.factual.table('restaurants-us').search('').filters({'email': {'$blank': False}, 'website': {'$blank': False}, 'tel': {'$blank': False}}).geo(
             factual.utils.circle(position['coords']['latitude'], position['coords']['longitude'], 2000)).sort('$distance:asc').include_count(True).data()
 
         self.write({
@@ -202,8 +204,11 @@ class APIPlacesHandler(BaseHandler):
         latitude = self.get_argument('latitude')
         longitude = self.get_argument('longitude')
 
+        #places = self.factual.table('places').search('').filters({'email': {'$blank': False}, 'website': {'$blank': False}, 'tel': {'$blank': False}}).geo(
+        #    factual.utils.circle(latitude, longitude, 2000)).sort('$distance:asc').include_count(True).data()
+
         places = self.factual.table('places').search('').filters({'email': {'$blank': False}, 'website': {'$blank': False}, 'tel': {'$blank': False}}).geo(
-            factual.utils.circle(latitude, longitude, 2000)).sort('$distance:asc').include_count(True).data()
+            factual.utils.circle(latitude, longitude, 60000)).sort('$distance:asc').include_count(True).offset(0).limit(50).data()
 
         self.write(tornado.escape.json_encode(places))
 
@@ -291,7 +296,8 @@ def main():
         tornado.web.url(r'/static/(js/.*)', tornado.web.StaticFileHandler, {'path': static_path}),
         ## Main
         tornado.web.url(r'/$', MainHandler, name='main'),
-        tornado.web.url(r'/test/.*', MainTestHandler, name='test'),
+        tornado.web.url(r'/places/.*$', MainHandler, name='places'),
+        tornado.web.url(r'/place/.*$', MainHandler, name='place'),
         ## API Stubs
         tornado.web.url(r'/api/init$', APIInitHandler, name='api+init'),
         tornado.web.url(r'/api/place$', APIPlaceHandler, name='api+place'),
