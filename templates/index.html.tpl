@@ -324,6 +324,7 @@
                         //window.location = "/places/" + position.coords.latitude.toString() + "/" +  position.coords.longitude.toString();
                         //window.location = "/places/" + position.coords.latitude.toString() + "/" +  position.coords.longitude.toString();
                         //app.navigate("/places/" + position.coords.latitude.toString() + "/" +  position.coords.longitude.toString(), { trigger: true });
+                        delete(app.placesView); //Kill caching
                         Backbone.history.navigate("places/" + position.coords.latitude.toString() + "/" +  position.coords.longitude.toString(), { trigger: true });
                     });
                 }
