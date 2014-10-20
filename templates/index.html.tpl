@@ -450,7 +450,15 @@
                 },
 
                 places: function (latitude, longitude) {
-                    $("#content-view").html(new PlacesView({latitude: latitude, longitude: longitude}).render().el);
+                    // Testing simple caching
+                    if (!this.placesView) {
+                        this.placesView = new PlacesView({latitude: latitude, longitude: longitude})
+                        this.placesView.render();
+                    } else {
+                        this.placesView.delegateEvents(); // delegate events when the view is recycled
+                    }                                        
+
+                    $("#content-view").html(this.placesView.el);
                 },
             
             });
