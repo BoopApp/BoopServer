@@ -6,6 +6,7 @@ import sys
 
 import pprint
 
+import time
 import pytz
 import datetime
 
@@ -20,12 +21,18 @@ import tornado.escape
 import tornado.httputil
 import tornado.gen
 
+import functools
+
 import motor
 import bson
 import pymongo
 
-import factual
-import factual.utils
+import chromelogger
+
+from geohash import encode as geohash_encode
+from geohash import decode as geohash_decode
+
+import oauthlib.oauth1
 
 from tornado.options import options
 from tornado.options import define
@@ -49,7 +56,7 @@ define('cookie_domain', type=str, group='Cookies')
 define('listen_port', default=8000, help='Listen Port', type=int, group='HTTP Server')
 define('listen_host', default='localhost', help='Listen Host', type=str, group='HTTP Server')
 
-define('mongodb_uri', default='mongodb://localhost:27017/booplink', type=str, group='MongoDB')
+define('mongodb_uri', default='mongodb://localhost:27017/boopalpha', type=str, group='MongoDB')
 
 define('mandrill_api_key', type=str, group='Mandrill')  
 
@@ -57,11 +64,13 @@ define('oneall_api_uri', type=str, group='OneAll Social Auth')
 define('oneall_public_key', type=str, group='OneAll Social Auth')
 define('oneall_private_key', type=str, group='OneAll Social Auth')
 
+define('citygrid_publisher_id', type=str, group='CityGrid')
+
 define('factual_api_key', type=str, group='Factual')
 define('factual_api_secret', type=str, group='Factual')
 
-define('page_title_prefix', default='Boop.Link', type=str, group='Page Information')
-define('page_copyright', default='2014 Boop.Link Team', type=str, group='Page Information')
+define('page_title_prefix', default='Boop@', type=str, group='Page Information')
+define('page_copyright', default='2014 Boop@ Team', type=str, group='Page Information')
 
 ## ┏┓ ┏━┓┏━┓┏━╸╻ ╻┏━┓┏┓╻╺┳┓╻  ┏━╸┏━┓
 ## ┣┻┓┣━┫┗━┓┣╸ ┣━┫┣━┫┃┗┫ ┃┃┃  ┣╸ ┣┳┛
@@ -74,8 +83,12 @@ class BaseHandler(tornado.web.RequestHandler):
         self.motor_client = self.settings['motor_client']
         self.motor_db = self.motor_client.get_default_database()
 
-        # Move this off to a more global situation
-        self.factual = factual.Factual(self.settings['factual_api_key'], self.settings['factual_api_secret'])
+        self.citygrid_publisher_id = self.settings['citygrid_publisher_id']
+
+        self.factual_api_key = self.settings['factual_api_key']
+        self.factual_api_secret = self.settings['factual_api_secret']
+
+        self.factual_oauth1_client = oauthlib.oauth1.Client(self.factual_api_key, client_secret=self.factual_api_secret)
 
         self.args = args
         self.kwargs = kwargs
@@ -85,8 +98,6 @@ class BaseHandler(tornado.web.RequestHandler):
 
     @tornado.gen.coroutine
     def prepare(self):
-
-        self.set_header('X-Boop-Oid', str(self.oid))
 
         if self.request.headers.get('X-Post-Action'):
             self.set_status(202)
@@ -119,6 +130,8 @@ class BaseHandler(tornado.web.RequestHandler):
             self.set_status(200)
             self.finish()
 
+        self.set_header('X-Boop-Oid', str(self.oid))
+
     def get_template_namespace(self):
         namespace = super(BaseHandler, self).get_template_namespace()
         namespace.update({
@@ -128,6 +141,14 @@ class BaseHandler(tornado.web.RequestHandler):
         })
 
         return namespace
+
+    def finish(self, chunk=None):
+        header = chromelogger.get_header()
+
+        if header is not None:
+            self._headers[header[0]] = header[1]
+
+        return super(BaseHandler, self).finish(chunk=chunk)
 
 ## ┏━┓┏━┓┏━╸┏━╸┏━╸┏━┓┏━┓┏━┓┏━┓╻ ╻┏━┓┏┓╻╺┳┓╻  ┏━╸┏━┓
 ## ┣━┛┣━┫┃╺┓┣╸ ┣╸ ┣┳┛┣┳┛┃ ┃┣┳┛┣━┫┣━┫┃┗┫ ┃┃┃  ┣╸ ┣┳┛
@@ -150,6 +171,7 @@ class StubHandler(BaseHandler):
 
     def get(self, *args, **kwargs):
         self.write(dict(self.request.headers))
+        print(self.request.remote_ip);
 
     def head(self, *args, **kwargs):
         self.write('')
@@ -173,61 +195,164 @@ class StubHandler(BaseHandler):
 
 class MainHandler(BaseHandler):
     def get(self, *args, **kwargs):
+        self.set_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+
+        chromelogger.log(
+            os.popen('toilet -f future boop boopity boop boop').read() + 
+            "Welcome to the boop zone.\n"
+            "The current time is {time}.\n".format(time=datetime.datetime.now(pytz.UTC).isoformat())
+        )
+
         self.render('index.html.tpl')
 
-class MainTestHandler(BaseHandler):
+class TestHandler(BaseHandler):
     def get(self, *args, **kwargs):
-        self.render('backbonetest.html.tpl')
+        self.render('test.html.tpl')
+class TabsTestHandler(BaseHandler):
+    def get(self, *args, **kwargs):
+        self.render('tabstest.html.tpl')
 
-## ┏━┓┏━┓╻╻┏┓╻╻╺┳╸╻ ╻┏━┓┏┓╻╺┳┓╻  ┏━╸┏━┓
-## ┣━┫┣━┛┃┃┃┗┫┃ ┃ ┣━┫┣━┫┃┗┫ ┃┃┃  ┣╸ ┣┳┛
-## ╹ ╹╹  ╹╹╹ ╹╹ ╹ ╹ ╹╹ ╹╹ ╹╺┻┛┗━╸┗━╸╹┗╸
-
-class APIInitHandler(BaseHandler):
-    def post(self, *args, **kwargs):
-
-        position = tornado.escape.json_decode(self.request.body);
-
-        #places = self.factual.table('places').search('').filters({'email': {'$blank': False}, 'website': {'$blank': False}, 'tel': {'$blank': False}}).geo(
-        #    factual.utils.circle(position['coords']['latitude'], position['coords']['longitude'], 2000)).sort('$distance:asc').include_count(True).data()
-        places = self.factual.table('restaurants-us').search('').filters({'email': {'$blank': False}, 'website': {'$blank': False}, 'tel': {'$blank': False}}).geo(
-            factual.utils.circle(position['coords']['latitude'], position['coords']['longitude'], 2000)).sort('$distance:asc').include_count(True).data()
-
-        self.write({
-            'status': 200,
-            'places': places
-        })
-
-class APIPlacesHandler(BaseHandler):
+class PlacesHandler(BaseHandler):
+    @tornado.gen.coroutine
     def get(self, *args, **kwargs):
 
-        latitude = self.get_argument('latitude')
-        longitude = self.get_argument('longitude')
+        geohash = kwargs['geohash']
 
-        #places = self.factual.table('places').search('').filters({'email': {'$blank': False}, 'website': {'$blank': False}, 'tel': {'$blank': False}}).geo(
-        #    factual.utils.circle(latitude, longitude, 2000)).sort('$distance:asc').include_count(True).data()
+        latitude, longitude = geohash_decode(geohash)
 
-        places = self.factual.table('places').search('').filters({'email': {'$blank': False}, 'website': {'$blank': False}, 'tel': {'$blank': False}}).geo(
-            factual.utils.circle(latitude, longitude, 60000)).sort('$distance:asc').include_count(True).offset(0).limit(50).data()
+        http_client = tornado.httpclient.AsyncHTTPClient()
 
-        self.write(tornado.escape.json_encode(places))
+        #places = self.factual_client.table('places').search('').filters({'email': {'$blank': False}, 'website': {'$blank': False}, 'tel': {'$blank': False}}).geo(
+        #    factual.utils.circle(latitude, longitude, 2000)).sort('$distance:asc').include_count(True).offset(0).limit(50).data()
 
-## ┏━┓┏━┓╻┏━┓╻  ┏━┓┏━╸┏━╸╻ ╻┏━┓┏┓╻╺┳┓╻  ┏━╸┏━┓
-## ┣━┫┣━┛┃┣━┛┃  ┣━┫┃  ┣╸ ┣━┫┣━┫┃┗┫ ┃┃┃  ┣╸ ┣┳┛
-## ╹ ╹╹  ╹╹  ┗━╸╹ ╹┗━╸┗━╸╹ ╹╹ ╹╹ ╹╺┻┛┗━╸┗━╸╹┗╸
+        citygrid_latlon_search_url = tornado.httputil.url_concat(
+            'http://api.citygridmedia.com/content/places/v2/search/latlon',
+            {
+                'format': 'json',
+                'publisher': self.citygrid_publisher_id,                    
+                'lat': latitude,
+                'lon': longitude,
+                'histograms': 'true',
+                'rpp': '50',
+                'radius': '50',
+            }
+        )
 
-class APIPlaceHandler(BaseHandler):
-    def post(self, *args, **kwargs):
+        print(citygrid_latlon_search_url)
 
-        place = tornado.escape.json_decode(self.request.body);
+        response = yield http_client.fetch(citygrid_latlon_search_url)
 
-        data = self.factual.get_row('places', place['factual_id'])
-        print(data)
+        response_json = tornado.escape.json_decode(response.body)['results']
+        places = []
 
-        self.write({
-            'status': 200,
-            'place': data
-        })
+        for citygrid_data in response_json['locations']:
+
+            citygrid_data['geohash'] = geohash_encode(citygrid_data['latitude'], citygrid_data['longitude'], precision=8)
+
+            place = yield self.motor_db['places'].find_and_modify(
+                {
+                    'citygrid_public_id': citygrid_data['public_id'],
+                },
+                {
+                    '$set': {
+                        'citygrid.search': citygrid_data
+                    },
+                    '$setOnInsert': {
+                        'display.name': citygrid_data['name'],
+                        'display.website': citygrid_data['website'],
+                        'display.phone': citygrid_data['phone_number'],
+                        'display.address': citygrid_data['address']
+                    },
+                    '$addToSet': {
+                        'geohash': {
+                            '$each': [
+                                geohash,
+                                citygrid_data['geohash']
+                            ]
+                        },
+                    }
+                },
+                upsert = True,
+                new = True,
+            )
+            
+            places.append(place);
+            
+        self.render('places.html.tpl', places=places, histograms=response_json['histograms'])
+
+class PlaceHandler(BaseHandler):
+    @tornado.gen.coroutine
+    def get(self, *args, **kwargs):
+
+        oid = kwargs['oid']
+        geohash = kwargs['geohash']
+        latitude, longitude = geohash_decode(geohash)
+        
+        place = yield self.motor_db['places'].find_one(
+            {
+                '_id': bson.ObjectId(oid),
+            },
+        )
+
+        uri, headers, body = self.factual_oauth1_client.sign('http://api.v3.factual.com/t/places/03c26917-5d66-4de9-96bc-b13066173c65')
+
+        http_client = tornado.httpclient.AsyncHTTPClient()
+
+        response = yield http_client.fetch(uri, headers=headers)
+
+        import pprint; pprint.pprint(tornado.escape.json_decode(response.body))
+
+        if not 'detail' in place['citygrid']:
+
+            http_client = tornado.httpclient.AsyncHTTPClient()
+
+            citygrid_latlon_search_url = tornado.httputil.url_concat(
+                'http://api.citygridmedia.com/content/places/v2/detail',
+                {
+                    'format': 'json',
+                    'publisher': self.citygrid_publisher_id,                    
+                    'client_ip': self.request.remote_ip,
+                    'public_id': place['citygrid_public_id'],
+                }
+            )
+    
+            response = yield http_client.fetch(citygrid_latlon_search_url)
+
+            response_json = tornado.escape.json_decode(response.body)
+
+            for citygrid_data in response_json['locations']:
+    
+                import pprint; pprint.pprint(citygrid_data);
+
+                citygrid_data['geohash'] = geohash_encode(citygrid_data['address']['latitude'], citygrid_data['address']['longitude'], precision=8)
+    
+                place = yield self.motor_db['places'].find_and_modify(
+                    {
+                        'citygrid_public_id': citygrid_data['public_id'],
+                    },
+                    {
+                        '$set': {
+                            'display.name': citygrid_data['name'],
+                            'display.website': citygrid_data['contact_info']['display_url'],
+                            'display.phone': citygrid_data['contact_info']['display_phone'],
+                            'display.address': citygrid_data['address'],
+                            'display.business_hours': citygrid_data['business_hours'],
+                            'citygrid.detail': citygrid_data
+                        },
+                        '$addToSet': {
+                            'geohash': {
+                                '$each': [
+                                    geohash,
+                                    citygrid_data['geohash']
+                                ]
+                            },
+                        }
+                    },
+                    upsert = True,
+                    new = True,
+                )                
+
+        self.render('place.html.tpl', place=place)
 
 ## ┏━┓┏━┓╻┏━┓┏━╸┏━┓┏━┓┏━┓╺┳╸╻ ╻┏━┓┏┓╻╺┳┓╻  ┏━╸┏━┓
 ## ┣━┫┣━┛┃┣┳┛┣╸ ┣━┛┃ ┃┣┳┛ ┃ ┣━┫┣━┫┃┗┫ ┃┃┃  ┣╸ ┣┳┛
@@ -238,9 +363,9 @@ class APIReportHandler(BaseHandler):
     @tornado.gen.coroutine
     def post(self, *args, **kwargs):
 
-        report = tornado.escape.json_decode(self.request.body);
+        #report = tornado.escape.json_decode(self.request.body);
 
-        place = self.factual.get_row('places', report['factual_id'])
+        #place = self.factual.get_row('places', report['factual_id'])
 
         http_client = tornado.httpclient.AsyncHTTPClient()
 
@@ -252,7 +377,7 @@ class APIReportHandler(BaseHandler):
                     'message': {
                         'html': self.render_string('report_email.html.tpl', report=report, place=place).decode('utf-8'),
                         'subject': 'You have been booped: ' + report['reason_code'] + ' (' + str(self.oid) + ')',
-                        'from_email': 'reply@boop.link',
+                        'from_email': 'reply@boop.at',
                         'from_name': 'You have been booped',
                         'to': [
                             {
@@ -260,7 +385,7 @@ class APIReportHandler(BaseHandler):
                                 'type': 'to'
                             }
                         ],
-                        'subaccount': 'boop.link',
+                        'subaccount': 'boop.at',
                     },
                     'async': False,
                 }
@@ -294,18 +419,20 @@ def main():
         tornado.web.url(r'/static/(ico/.*)', tornado.web.StaticFileHandler, {'path': static_path}),
         tornado.web.url(r'/static/(img/.*)', tornado.web.StaticFileHandler, {'path': static_path}),
         tornado.web.url(r'/static/(js/.*)', tornado.web.StaticFileHandler, {'path': static_path}),
+
         ## Main
         tornado.web.url(r'/$', MainHandler, name='main'),
-        tornado.web.url(r'/places/.*$', MainHandler, name='places'),
-        tornado.web.url(r'/place/.*$', MainHandler, name='place'),
-        ## API Stubs
-        tornado.web.url(r'/api/init$', APIInitHandler, name='api+init'),
-        tornado.web.url(r'/api/place$', APIPlaceHandler, name='api+place'),
-        tornado.web.url(r'/api/report$', APIReportHandler, name='api+report'),
+        tornado.web.url(r'/test$', TestHandler, name='test'),
+        tornado.web.url(r'/tabstest$', TabsTestHandler, name='tabstest'),
+        tornado.web.url(r'/places/(?P<geohash>[0123456789bcdefghjkmnpqrstuvwxyz]{8})$', PlacesHandler, name='places'),
+        tornado.web.url(r'/place/(?P<geohash>[0123456789bcdefghjkmnpqrstuvwxyz]{8})/(?P<oid>[0123456789abcdef]{24})$', PlaceHandler, name='place'),
 
-        tornado.web.url(r'/api/places$', APIPlacesHandler, name='api+places'),
-        tornado.web.url(r'/api/.*', StubHandler, name='api+wildcard'),
+        ## API Stubs ## PERHAPS NO LONGER NEEDED
+        #tornado.web.url(r'/api/report$', APIReportHandler, name='api+report'),
 
+        tornado.web.url(r'/__stub__$', StubHandler, name='api+wildcard'),
+
+        ## SMTP Inbound events
         tornado.web.url(r'/smtp/inbound$', StubHandler, name='smtp+inbound'),
         tornado.web.url(r'/smtp/event$', StubHandler, name='smtp+event'),
     ]

@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "jquery": "latest",
+    "bootstrap": "latest",
+    "bootswatch": "latest",
+    "font-awesome": "latest",
+    "leaflet": "latest",
+    "modernizr": "latest",
+    "html5shiv": "latest",
+    "mobile-detect": "latest",
+    "respond.js": "latest"
+  }
+}

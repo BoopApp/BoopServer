@@ -8,498 +8,248 @@
         <meta charset="utf-8"/>
         
         <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
         
         <meta name="description" content=""/>
-        <meta name="author" content=""/>
+        <meta name="author" content="boop@boop.at"/>
         
-        <meta name="apple-mobile-web-app-capable" content="yes"/>
-        <meta name="mobile-web-app-capable" content="yes"/>
-        
-        <meta property="og:image" content="{{ static_url('images/button_red.png') }}"/>
+        <!-- <meta property="og:image" content="{{ static_url('images/button_red.png') }}"/> -->
         
         <meta property="xsrf" content="{{ handler.xsrf_token }}"/>
         
-        <meta property="api:init" content="{{ reverse_url('api+init') }}"/>
-        <meta property="api:place" content="{{ reverse_url('api+place') }}"/>
-        <meta property="api:places" content="{{ reverse_url('api+places') }}"/>
-        <meta property="api:report" content="{{ reverse_url('api+report') }}"/>
-        
-        <link rel="shortcut icon" href="{{ static_url('images/button_red.png') }}"/>
+        <!-- <link rel="shortcut icon" href="{{ static_url('images/button_red.png') }}"/> -->
         
         <title>{{ page_title }}</title>
         
+        <!-- ┏┓ ┏━┓┏━┓┏━┓ -->
+        <!-- ┣┻┓┃ ┃┃ ┃┣━┛ -->
+        <!-- ┗━┛┗━┛┗━┛╹   -->
+        
+        <!-- Contact boop@boop.at if you're interested in being a boop monkey -->
+        
         <!-- Bootstrap/Bootswatch CSS -->
-        <link href="//cdnjs.cloudflare.com/ajax/libs/bootswatch/3.2.0+1/superhero/bootstrap.min.css" rel="stylesheet"/>
+        <!-- <link href="//cdnjs.cloudflare.com/ajax/libs/bootswatch/3.2.0+1/lumen/bootstrap.min.css -->
+        <link href="http://bootswatch.com/paper/bootstrap.css" rel="stylesheet" type='text/css'/>
         
         <!-- FontAwesome Icons -->
-        <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" />
+        <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type='text/css'/>
+        
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,800,700,600,300' rel='stylesheet' type='text/css'/>
+        
+        <link href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" rel="stylesheet" type='text/css'/>
         
         <style>
             <!--/*--><![CDATA[/*><!--*/           
 
-            body {
-                padding-top: 60px;
-                overflow-y: scroll;
-            }        
+                @-webkit-keyframes blink {
+                    0% {
+                        box-shadow: 0 0 10px 10px rgba(255,0,0,0.25);
+                    }
+                    50% {
+                        box-shadow: 0 0 10px 10px rgba(255,0,0,0.0);
+                    }
+                    100% {
+                        box-shadow: 0 0 10px 10px rgba(255,0,0,0.25);
+                    }
+                }
+                @-moz-keyframes blink {
+                    0% {
+                        box-shadow: 0 0 10px 10px rgba(255,0,0,0.25);
+                    }
+                    50% {
+                        box-shadow: 0 0 10px 10px rgba(255,0,0,0.0);
+                    }
+                    100% {
+                        box-shadow: 0 0 10px 10px rgba(255,0,0,0.25);
+                    }
+                }
+                .objblink {
 
-            .btn-text {
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-
-            .overlay {
-                z-index: 9999;
-                position: fixed;
-                top: 0;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                background: rgba(0,0,0,0.5);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
+                    -webkit-transition: all 1s ease-in-out;
+                    -moz-transition: all 1s ease-in-out;
+                    -o-transition: all 1s ease-in-out;
+                    -ms-transition: all 1s ease-in-out;
+                    transition: all 1s ease-in-out;
+                    
+                    -webkit-animation-direction: normal;
+                    -webkit-animation-duration: 2s;
+                    -webkit-animation-iteration-count: infinite;
+                    -webkit-animation-name: blink;
+                    -webkit-animation-timing-function: ease-in-out;
+                    
+                    -moz-animation-direction: normal;
+                    -moz-animation-duration: 2s;
+                    -moz-animation-iteration-count: infinite;
+                    -moz-animation-name: blink;
+                    -moz-animation-timing-function: ease-in-out;    
+                }
+                
             /*]]>*/-->
         </style>
         
+        <script src="{{ static_url('assets/js/modernizr.min.js') }}"></script>
+        <script src="{{ static_url('assets/js/mobile-detect.min.js') }}"></script>
+        <script src="{{ static_url('assets/js/mobile-detect-modernizr.js') }}"></script>
+        
         <!-- [if lt IE 9] >
-          <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
-          <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
+          <script src="{{ static_url('assets/js/html5shivc.min.js') }}"></script>
+          <script src="{{ static_url('assets/js/respond.min.js') }}"></script>
         <![endif]-->
+        
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.0/js/bootstrap.min.js"></script>
+        
+        <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+        
+        <script src="{{ static_url('assets/js/geohash.js') }}"></script>
         
     </head>
     
-    <body>
-        
-        <div class="overlay" id="modal-loading" style="display: none">
-            <div>
-                <i id="modal-loading-icon" class="fa fa-spin fa-5x fa-refresh"></i>
-            </div>
-        </div>
-
-        <div class="modal fade" id="modal-loading-old">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Loading...</h4>
-                    </div>
-                    <div class="modal-body text-center">
-                        <p>
-                            <i class="fa fa-spin fa-5x fa-refresh"></i>
-                        </p>
-                    </div>
-                    <div class="modal-footer">
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div id="header-view"></div>
-        <div id="content-view"></div>
-
-        <!-- ╻ ╻┏━╸┏━┓╺┳┓┏━╸┏━┓╻ ╻╻┏━╸╻ ╻╺┳╸┏━╸┏┳┓┏━┓╻  ┏━┓╺┳╸┏━╸ -->
-        <!-- ┣━┫┣╸ ┣━┫ ┃┃┣╸ ┣┳┛┃┏┛┃┣╸ ┃╻┃ ┃ ┣╸ ┃┃┃┣━┛┃  ┣━┫ ┃ ┣╸  -->
-        <!-- ╹ ╹┗━╸╹ ╹╺┻┛┗━╸╹┗╸┗┛ ╹┗━╸┗┻┛ ╹ ┗━╸╹ ╹╹  ┗━╸╹ ╹ ╹ ┗━╸ -->
-
-        <script id="header-view-template" type="text/html">
-            <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <body>        
+        <div id="map" style="position: fixed; top: 64px; bottom: 64px; left: 0; right: 0; z-index: 0;"></div>
+        <!-- <div id="overlay" style="position: fixed; top: 64px; bottom: 64px; left: 0; right: 0; background-repeat: no-repeat; background-position: center center: background-size: cover; background-image: url({{ static_url('images/circlebg.png') }}); z-index: 1;"></div> -->
+        <header>
+            <nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="margin-bottom: 0">
                 <div class="container-fluid">
                     <div class="navbar-header">
-                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-top-navbar">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                             <span class="sr-only">Toggle navigation</span>
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a class="navbar-brand" href="/"><i id="modal-loading-icon" class="fa fa-hand-o-up"></i> Boop.Link</a>
+                        <a class="navbar-brand" href="/">
+                            <strong>boop<i class="fa fa-bullseye"></i></strong>
+                        </a>
                     </div>
-                    <div class="collapse navbar-collapse" id="bs-top-navbar">
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav">
+                        </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li>
-                                <a href="/">
-                                    <i class="fa fa-sign-in"></i> Login
+                                <a href="#" id="explore">
+                                    <i class="fa fa-globe"></i> Explore
                                 </a>
                             </li>
                             <li>
-                                <a href="/">
-                                    <i class="fa fa-pencil-square-o"></i> Register
+                                <a href="#">
+                                    <i class="fa fa-newspaper-o"></i> Recent
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <i class="fa fa-search"></i> Search
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </div>
             </nav>
-        </script>
-
-        <!-- ╻ ╻┏━┓┏┳┓┏━╸╻ ╻╻┏━╸╻ ╻╺┳╸┏━╸┏┳┓┏━┓╻  ┏━┓╺┳╸┏━╸ -->
-        <!-- ┣━┫┃ ┃┃┃┃┣╸ ┃┏┛┃┣╸ ┃╻┃ ┃ ┣╸ ┃┃┃┣━┛┃  ┣━┫ ┃ ┣╸  -->
-        <!-- ╹ ╹┗━┛╹ ╹┗━╸┗┛ ╹┗━╸┗┻┛ ╹ ┗━╸╹ ╹╹  ┗━╸╹ ╹ ╹ ┗━╸ -->
+        </header>
         
-        <script id="home-view-template" type="text/html">
-            <div id="boop-button-container" class="container-fluid">
-                <div class="row-fluid">
-                    <div class="col-xs-12">
-                        <img id="boop-button" src="{{ static_url('images/button_red.png') }}" class="img-responsive center-block"/>
+        <main style="position: absolute; top: 64px; bottom: 64px; left: 0px; right: 0px; z-index: 2;     pointer-events:none;">
+            <section>
+                <div class="container">
+                    <div class="row text-center" style="padding-top: 50vh;">
+                        <button id="booper" class="col-xs-6 col-xs-offset-3 btn btn-default btn-lg objblink disabled" style="position: relative; top: -30px;">Boop it up!</button>
+                    </div>
+                    <div class="row text-center">
+                        <i id="booper-loader" class="fa fa-spin fa-circle-o-notch fa-5x hidden"></i>
                     </div>
                 </div>
-            </div>
-        </script>
-
-        <!-- ┏━┓╻  ┏━┓┏━╸┏━╸┏━┓╻ ╻╻┏━╸╻ ╻╺┳╸┏━╸┏┳┓┏━┓╻  ┏━┓╺┳╸┏━╸ -->
-        <!-- ┣━┛┃  ┣━┫┃  ┣╸ ┗━┓┃┏┛┃┣╸ ┃╻┃ ┃ ┣╸ ┃┃┃┣━┛┃  ┣━┫ ┃ ┣╸  -->
-        <!-- ╹  ┗━╸╹ ╹┗━╸┗━╸┗━┛┗┛ ╹┗━╸┗┻┛ ╹ ┗━╸╹ ╹╹  ┗━╸╹ ╹ ╹ ┗━╸ -->
+            </section>
+        </main>
         
-        <script id="places-view-template" type="text/html">
-            <div class="container-fluid">
-                <div class="row-fluid">
-                    <div id="places-item-list" class="col-xs-12">
+        <footer>
+            <nav class="navbar navbar-default navbar-fixed-bottom" role="navigation" style="margin-bottom: 0">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="#" style="font-size: 90%">
+                            &copy; 2014 Brute Technologies
+                        </a>
+                    </div>
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li>
+                                <a href="http://boop.at/">
+                                    <i class="fa fa-sign-in"></i> Sign up for Alpha Newsletter
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <i class="fa fa-sign-in"></i> Login
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <i class="fa fa-edit"></i> Register
+                                </a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-            </div> 
-        </script>
-        
-        <!-- ┏━┓╻  ┏━┓┏━╸┏━╸┏━┓╻╺┳╸┏━╸┏┳┓╻ ╻╻┏━╸╻ ╻╺┳╸┏━╸┏┳┓┏━┓╻  ┏━┓╺┳╸┏━╸ -->
-        <!-- ┣━┛┃  ┣━┫┃  ┣╸ ┗━┓┃ ┃ ┣╸ ┃┃┃┃┏┛┃┣╸ ┃╻┃ ┃ ┣╸ ┃┃┃┣━┛┃  ┣━┫ ┃ ┣╸  -->
-        <!-- ╹  ┗━╸╹ ╹┗━╸┗━╸┗━┛╹ ╹ ┗━╸╹ ╹┗┛ ╹┗━╸┗┻┛ ╹ ┗━╸╹ ╹╹  ┗━╸╹ ╹ ╹ ┗━╸ -->
+            </nav>
+        </footer>
 
-        <script id="places-item-view-template" type="text/html">
-            <div class="row">
-                <a href="/place/<%- factual_id %>" class="btn btn-default btn-lg btn-text col-xs-12 col-sm-6"><strong><i class="fa fa-pencil-square-o"></i> <%- name %></strong></button>
-                <a href="tel:<%- tel %>" class="btn btn-success btn-lg col-xs-4 col-sm-2"><strong><i class="fa fa-phone"></i></strong></a>
-                <a href="<%- website %>" class="btn btn-warning btn-lg col-xs-4 col-sm-2"><strong><i class="fa fa-cloud"></i></strong></a>
-                <a href="mailto:<%- email %>" class="btn btn-primary btn-lg col-xs-4 col-sm-2"><strong><i class="fa fa-at"></i></strong></a>
-            </div>
-            <br/>
-        </script>
-
-        <!-- ┏━┓╻  ┏━┓┏━╸┏━╸╺┳┓┏━╸╺┳╸┏━┓╻╻  ╻ ╻╻┏━╸╻ ╻╺┳╸┏━╸┏┳┓┏━┓╻  ┏━┓╺┳╸┏━╸ -->
-        <!-- ┣━┛┃  ┣━┫┃  ┣╸  ┃┃┣╸  ┃ ┣━┫┃┃  ┃┏┛┃┣╸ ┃╻┃ ┃ ┣╸ ┃┃┃┣━┛┃  ┣━┫ ┃ ┣╸  -->
-        <!-- ╹  ┗━╸╹ ╹┗━╸┗━╸╺┻┛┗━╸ ╹ ╹ ╹╹┗━╸┗┛ ╹┗━╸┗┻┛ ╹ ┗━╸╹ ╹╹  ┗━╸╹ ╹ ╹ ┗━╸ -->
-
-        <script id="place-detail-view-template" type="text/html">
-            <div class="container-fluid">
-                <div class="row-fluid">
-                    <div class="col-xs-12">
-                            <h1><strong><%- name %></strong></h1>
-                            <small><% if ( typeof(hours_display) != "undefined" ){ %><%- hours_display %><% } %></small>
-
-                            <h3><i class="fa fa-cloud"></i> <%- website %></h3>
-                            <h3><i class="fa fa-at"></i> <%- email %></h3>
-      
-                            <h2><strong>Report:</strong></h2>
-    
-                            <div class="row">
-                                <button id="dirty-bathroom" type="button" class="btn btn-lg btn-default col-xs-12 col-sm-9"><strong>Dirty Bathroom Stall</strong></button>
-                                <button id="dirty-bathroom-urgent" type="button" class="btn btn-lg btn-warning col-xs-12 col-sm-3"><strong>Urgent!</strong></button>
-                            </div>  
-                                
-                            <br/>  
-                        
-                            <div class="row">
-                                <button id="not-open" type="button" class="btn btn-lg btn-default col-xs-12 col-sm-12"><strong>Not Open During Store Hours</strong></button>
-                            </div>
-            
-                            <br/>            
-                    </div>
-                </div>  
-            </div>              
-        </script>
-        
-        <!-- Bootstrap JS -->
-        
-        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/bootstrap.min.js"></script>
-        
-        <!-- Backbone JS /Underscore JS -->
-        
-        <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
-        
-        <!-- Global Awesomeness -->
-        
         <script>
             //<![CDATA[
-            
-            //]]>
-        </script>
-        
-        <!-- Backbone Main -->
-        
-        <script>
-            //<![CDATA[
-            
-            // ┏━┓╻  ┏━┓┏━╸┏━╸┏┳┓┏━┓╺┳┓┏━╸╻  
-            // ┣━┛┃  ┣━┫┃  ┣╸ ┃┃┃┃ ┃ ┃┃┣╸ ┃  
-            // ╹  ┗━╸╹ ╹┗━╸┗━╸╹ ╹┗━┛╺┻┛┗━╸┗━╸
 
-            window.Place = Backbone.Model.extend({
-            
-                idAttribute: 'factual_id',
+            var map;
 
-                urlRoot: $("meta[property='api:place']").attr('content'),
-            
-                initialize:function () {
-                    //this.reports = new PlaceCollection();
-                    //this.reports.url = '../api/places/' + this.id + '/reports';
-                }
-            
-            });
+            var latitude;
+            var longitude;
 
-            var place = new Place();
-
-            // ┏━┓╻  ┏━┓┏━╸┏━╸┏━╸┏━┓╻  ╻  ┏━╸┏━╸╺┳╸╻┏━┓┏┓╻
-            // ┣━┛┃  ┣━┫┃  ┣╸ ┃  ┃ ┃┃  ┃  ┣╸ ┃   ┃ ┃┃ ┃┃┗┫
-            // ╹  ┗━╸╹ ╹┗━╸┗━╸┗━╸┗━┛┗━╸┗━╸┗━╸┗━╸ ╹ ╹┗━┛╹ ╹
-            
-            window.PlaceCollection = Backbone.Collection.extend({
-
-                url: $("meta[property='api:places']").attr('content'),
-
-                model: Place,
-
-            });
-
-            var places = new PlaceCollection();
-
-            // ╻ ╻┏━╸┏━┓╺┳┓┏━╸┏━┓╻ ╻╻┏━╸╻ ╻
-            // ┣━┫┣╸ ┣━┫ ┃┃┣╸ ┣┳┛┃┏┛┃┣╸ ┃╻┃
-            // ╹ ╹┗━╸╹ ╹╺┻┛┗━╸╹┗╸┗┛ ╹┗━╸┗┻┛
-
-            window.HeaderView = Backbone.View.extend({
-            
-                template: _.template($("#header-view-template").html()),
-
-                initialize: function () {
-                },
-            
-                render: function () {
-                    $(this.el).html(this.template());
-                    return this;
-                },
-            
-                events: {
-                },
-            
-                select: function(menuItem) {
-                    $('.nav li').removeClass('active');
-                    $('.' + menuItem).addClass('active');
-                }
-            
-            });
-
-            // ╻ ╻┏━┓┏┳┓┏━╸╻ ╻╻┏━╸╻ ╻
-            // ┣━┫┃ ┃┃┃┃┣╸ ┃┏┛┃┣╸ ┃╻┃
-            // ╹ ╹┗━┛╹ ╹┗━╸┗┛ ╹┗━╸┗┻┛
-
-            window.HomeView = Backbone.View.extend({
-            
-                template: _.template($("#home-view-template").html()),
-
-                initialize: function () {
-                },
-            
-                render: function () {
-                    $(this.el).html(this.template());
-                    return this;
-                },
-            
-                events: {
-                    "click #boop-button": "boop"
-
-                },
-            
-                boop: function () {
-
-                    $('#modal-loading-icon').removeClass('fa-refresh');
-                    $('#modal-loading-icon').removeClass('fa-globe');
-
-                    $('#modal-loading-icon').addClass('fa-globe');
-
-                    $('#modal-loading').fadeIn();
-
-                    navigator.geolocation.getCurrentPosition(function(position) {
-                        //window.location = "/places/" + position.coords.latitude.toString() + "/" +  position.coords.longitude.toString();
-                        //window.location = "/places/" + position.coords.latitude.toString() + "/" +  position.coords.longitude.toString();
-                        //app.navigate("/places/" + position.coords.latitude.toString() + "/" +  position.coords.longitude.toString(), { trigger: true });
-                        delete(app.placesView); //Kill caching
-                        Backbone.history.navigate("places/" + position.coords.latitude.toString() + "/" +  position.coords.longitude.toString(), { trigger: true });
-                    });
-                }
-            
-            });
-
-            window.PlacesItemView = Backbone.View.extend({
-            
-                template: _.template($("#places-item-view-template").html()),
-
-                initialize: function () {
-                },
-            
-                render: function () {
-                    $(this.el).html(this.template(this.model.toJSON()));
-                    return this;
-                },
-            
-                events: {
-                },
-
-            });
-
-            window.PlacesView = Backbone.View.extend({
-            
-                template: _.template($("#places-view-template").html()),
-
-                initialize: function (options) {
-
-                    // Reinit
-                    places = new PlaceCollection();
-
-                    this.listenTo(places, 'reset', this.addPlaces);                    
-
-                    $('#modal-loading-icon').removeClass('fa-refresh');
-                    $('#modal-loading-icon').removeClass('fa-globe');
-
-                    $('#modal-loading-icon').addClass('fa-refresh');
-
-                    $('#modal-loading').fadeIn();
-
-                    places.fetch({
-                        reset: true,
-                        data:{
-                            latitude: options.latitude,
-                            longitude: options.longitude,
-                        },
-                        success: function (data) {
-                            $('#modal-loading').fadeOut();
-                        }
-                    });
-
-                },
-            
-                render: function () {
-                    $(this.el).html(this.template());                    
-                    return this;
-                },
-            
-                events: {
-                },
-
-                addPlace: function (place) {
-                    var view = new PlacesItemView({model: place});
-                    var item = this.$("#places-item-list").append(view.render().el);
-                },
-
-                addPlaces: function (places) {
-                    places.each(this.addPlace, this);
-                },
-
-            });
-
-            window.PlaceView = Backbone.View.extend({
-            
-                template: _.template($("#place-detail-view-template").html()),
-
-                initialize: function (options) {
-                    this.model = places.get(options.id);
-                    console.log(place);
-                },
-            
-                render: function () {
-                    $(this.el).html(this.template(this.model.toJSON()));
-                    return this;
-                    console.log($(this.el));
-                },
-            
-                events: {
-                },
-
-            });
-
-            // ┏━┓┏━┓╻ ╻╺┳╸┏━╸┏━┓
-            // ┣┳┛┃ ┃┃ ┃ ┃ ┣╸ ┣┳┛
-            // ╹┗╸┗━┛┗━┛ ╹ ┗━╸╹┗╸
-
-            window.Router = Backbone.Router.extend({
-            
-                routes: {
-                    "": "home",
-                    "place/:id": "place",
-                    "places/:latitude/:longitude": "places",
-                },
-            
-                initialize: function () {
-                    this.headerView = new HeaderView();
-                    $('#header-view').html(this.headerView.render().el);            
-                },
-            
-                home: function () {
-                    // Since the home view never changes, we instantiate it and render it only once
-                    if (!this.homeView) {
-                        this.homeView = new HomeView();
-                        this.homeView.render();
-                    } else {
-                        this.homeView.delegateEvents(); // delegate events when the view is recycled
-                    }
-                    $("#content-view").html(this.homeView.el);
-                },
-
-                place: function (id) {
-                    $("#content-view").html(new PlaceView({id: id}).render().el);
-                },
-
-                places: function (latitude, longitude) {
-                    // Testing simple caching
-                    if (!this.placesView) {
-                        this.placesView = new PlacesView({latitude: latitude, longitude: longitude})
-                        this.placesView.render();
-                    } else {
-                        this.placesView.delegateEvents(); // delegate events when the view is recycled
-                    }                                        
-
-                    $("#content-view").html(this.placesView.el);
-                },
-            
-            });
-
-            window.app = new Router();
-            Backbone.history.start({pushState: true, root: '/'});
-
-            window.document.addEventListener('click', function(e) {
-                e = e || window.event
-                var target = e.target || e.srcElement
-                if ( target.nodeName.toLowerCase() === 'a' ) {
-                    e.preventDefault()
-                    var uri = target.getAttribute('href')
-                    app.navigate(uri.substr(1), true)
-                }
-            });
-
-            window.addEventListener('popstate', function(e) {
-                app.navigate(location.pathname.substr(1), true);
-            }); 
-            
-            $(document).on("click", "a:not([data-bypass])[href^='/']", function(evt) {
-                console.log(this);
-                evt.preventDefault();
-                Backbone.history.navigate($(this).attr('href'), true);
-            });                       
-            
-
-            //]]>
-        </script>
-        
-        <!-- jQuery Document Ready -->
-        
-        <script>
-            //<![CDATA[
+            var geohash;
 
             $.ajaxSetup({ cache: false });
 
+            $(function() {
+                $('.hidden').hide().removeClass('hidden');
+            });
+
+            $('#explore').click(function() {
+                $('main').fadeOut('slow'); $('#overlay').fadeOut('fast');
+            });
+
+            $('#booper').click(function() {
+                $('#booper').addClass('disabled');
+                $('#booper-loader').fadeIn();
+                window.location = '/places/' + geohash;
+            });
+
             $(document).ready(function() {
 
+                map = L.map('map', {
+                    zoomControl: false,
+                    maxZoom: 18,
+                    layers:  [
+                        L.tileLayer(
+                            'http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.jpeg',
+                            {
+                                attribution: 'Tiles by <a href="http://www.mapquest.com/">MapQuest</a> &mdash; Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+                                subdomains: '1234'
+                            }
+                        )
+                    ]
+                });
+
+                map.on('locationfound', function (e) {
+                    $('#booper').removeClass('disabled');
+                    geohash = Geohash.encode(e.latlng.lat, e.latlng.lng, 8).toString();
+                });
+
+                map.locate({
+                    'watch': true,
+                    'setView': true,
+                    'enableHighAccuracy': true,
+                });
 
             });
 
@@ -509,4 +259,3 @@
     </body>
     
 </html>
-
