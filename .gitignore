@@ -54,3 +54,6 @@ docs/_build/
 target/
 
 server.conf
+
+3rdparty/node_modules/
+
