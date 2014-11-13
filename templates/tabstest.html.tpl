@@ -2,8 +2,7 @@
 <!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
 <!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
 <!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
-{% comment ... <!--[if (gte IE 9)|!(IE)]><!--><html lang="en" manifest="...{{ static_url('app.appcache') }}"> <!--<![endif]--> ... %}
-<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+{% comment ... <!--[if (gte IE 9)|!(IE)]><!--><html lang="en" manifest="...{{ static_url('app.appcache') }}"> <!--<![endif]--> ... %}<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
     <head>
         
         <meta charset="utf-8"/>
@@ -14,29 +13,29 @@
         
         <meta name="mobile-web-app-capable" content="yes"/>
         <meta name="apple-mobile-web-app-capable" content="yes"/>
-        
-        <link rel="manifest" href="{{ static_url('app.manifest') }}"/>
-        
-        <meta name="description" content=""/>
+                
+        <meta name="description" content="Boop - Connected Customer Service"/>
         <meta name="author" content="boop@boop.at"/>
         
-        <!-- <meta property="og:image" content="{{ static_url('assets/img/button_red.png') }}"/> -->
+        <meta property="og:image" content="{{ static_url('site/img/icons/location.png') }}"/>
         
         <meta property="xsrf" content="{{ handler.xsrf_token }}"/>
         
-        <link rel="shortcut icon" href="{{ static_url('assets/img/icons/location.png') }}"/>
-        <link rel="shortcut icon" sizes="192x192" href="{{ static_url('assets/img/icons/location.png') }}"/>
-        <link rel="shortcut icon" sizes="128x128" href="{{ static_url('assets/img/icons/location.png') }}"/>
+        <link rel="shortcut icon" href="{{ static_url('site/img/icons/location.png') }}"/>
+        <link rel="shortcut icon" sizes="192x192" href="{{ static_url('site/img/icons/location.png') }}"/>
+        <link rel="shortcut icon" sizes="128x128" href="{{ static_url('site/img/icons/location.png') }}"/>
+
+        <link rel="manifest" href="{{ static_url('app.manifest') }}"/>
         
         <title>Boop Alpha Layout</title>
         
         <!-- Bootstrap/Bootswatch CSS -->
-        <link href="{{ static_url('assets/npm/bootswatch/custom/bootstrap.min.css') }}" rel="stylesheet" type='text/css'/>
+        <link href="{{ static_url('site/bootswatch/boop/bootstrap.min.css') }}" rel="stylesheet" type='text/css'/>
         
         <!-- FontAwesome Icons -->
-        <link href="{{ static_url('assets/npm/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type='text/css'/>
+        <link href="{{ static_url('assets/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type='text/css'/>
         
-        <link href="{{ static_url('assets/npm/leaflet/dist/leaflet.css') }}" rel="stylesheet" type='text/css'/>
+        <link href="{{ static_url('assets/leaflet/dist/leaflet.css') }}" rel="stylesheet" type='text/css'/>
         
         <style>
             <!--/*--><![CDATA[/*><!--*/
@@ -82,13 +81,12 @@
             /*]]>*/-->
         </style>
         
-        <script src="{{ static_url('assets/npm/modernizr/dist/modernizr-build.min.js') }}"></script>
-        <script src="{{ static_url('assets/npm/mobile-detect/mobile-detect.js') }}"></script>
-        <script src="{{ static_url('assets/npm/mobile-detect/mobile-detect-modernizr.js') }}"></script>
+        <script src="{{ static_url('assets/modernizr/modernizr.js') }}"></script>
+        <script src="{{ static_url('assets/mobile-detect/mobile-detect.js') }}"></script>
+        <script src="{{ static_url('assets/mobile-detect/mobile-detect-modernizr.js') }}"></script>
         
-        <!-- [if lt IE 9] >
-          <script src="{{ static_url('assets/npm/html5shiv/dist/html5shiv.min.js') }}"></script>
-          <script src="{{ static_url('assets/npm/respond.js/dest/respond.min.js') }}"></script>
+        <!-- [if lt IE 9]>
+          <script src="{{ static_url('assets/respond/dest/respond.min.js') }}"></script>
         <![endif]-->
         
     </head>
@@ -116,8 +114,8 @@
             </div>
         </div>
                 
-        <div class="container navbar-fixed-top" style="padding-left: 0; padding-right: 0; background: white;">
-            <nav class="navbar navbar-inverse" role="navigation" style="margin-bottom: 0; border-width: 0; background: white;">
+        <div class="navbar-fixed-top" style="padding-left: 0; padding-right: 0;">
+            <nav class="navbar navbar-default" role="navigation" style="margin-bottom: 0; border-width: 0;">
                 <div class="container-fluid">
                     <div class="navbar-header">
                         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -127,9 +125,7 @@
                             <span class="icon-bar"></span>
                         </button>
                         <a class="navbar-brand" href="#">
-                            <strong>
-                                <i class="fa fa-bullseye"></i> Boop
-                            </strong>
+                                Connected Customer Service
                         </a>
                     </div>
                     <div id="navbar" class="navbar-collapse collapse">
@@ -162,33 +158,37 @@
             
         </div>
 
-        <div id="map-container" class="container" style="position: absolute; top: 50px; left: 0; right: 0; z-index: 903; padding-left: 0; padding-right: 0;">
-                <button id="button-map" type="button" class="btn btn-lg btn-default col-xs-6">
+        <div id="tab-container" class="container-fluid" style="position: absolute; top: 40px; left: 0; right: 0; z-index: 903; padding-left: 0; padding-right: 0;">
+                <button id="button-detail" type="button" class="btn btn-lg btn-primary col-xs-4 active">
                     <strong>
-                        <i class="fa fa-globe"></i>
+                        <i class="fa fa-bullseye"> Boop</i>
                     </strong>
                 </button>
-                
-                <button id="button-detail" type="button" class="btn btn-lg btn-default col-xs-6 active">
+                <button id="button-nearby" type="button" class="btn btn-lg btn-primary col-xs-4">
                     <strong>
-                        <i class="fa fa-info-circle"></i>
+                        <i class="fa fa-crosshairs"> Nearby</i>
                     </strong>
                 </button>
+                <button id="button-map" type="button" class="btn btn-lg btn-primary col-xs-4">
+                    <strong>
+                        <i class="fa fa-globe"> Map</i>
+                    </strong>
+                </button>                
         </div>
                 
                
-        <div id="map-container" class="container" style="position: absolute; top: 0; left: 0; right: 0; height: 100vh; background: white; z-index: 900;">
-            <div id="map" class="col-xs-12" style="position: absolute; top: 96px; left: 0; right: 0; bottom: 0;">
+        <div id="map-container" class="container-fluid" style="position: absolute; top: 0; left: 0; right: 0; height: 100vh; z-index: 900;">
+            <div id="map" class="col-xs-12" style="position: absolute; top: 90px; left: 0; right: 0; bottom: 0;">
             </div>
         </div>
         
-        <div id="detail-container" class="container" style="position: absolute; top: 96px; left: 0; right: 0; background: white; z-index: 1000; bottom: 0; overflow: scroll; overflow-x: hidden;">
-            <div class="row" style="background-image: linear-gradient(rgba(221,221,221,0), rgba(221,221,221,0.5) 66%, rgba(221,221,221,1));">
+        <div id="detail-container" class="container-fluid" style="position: absolute; top: 90px; left: 0; right: 0; background: #2B3E50; z-index: 1000; bottom: 0; overflow: scroll; overflow-x: hidden;">
+            <div class="row">
                 <div class="col-xs-12">
-                    <img src="{{ static_url('assets/img/icons/location.png') }}" style="width: 10em; height: 10em;" class="pull-left hidden-xs"/>
+                    <img src="{{ static_url('site/img/icons/location.png') }}" style="width: 10em; height: 10em;" class="pull-left hidden-xs"/>
                     <div class="pull-left">
                         <h3 style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
-                            <img src="{{ static_url('assets/img/icons/location.png') }}" style="width: 1em; height: 1em;" class="pull-left visible-xs"/>
+                            <img src="{{ static_url('site/img/icons/location.png') }}" style="width: 1em; height: 1em;" class="pull-left visible-xs"/>
                             <strong>Place Title</strong>
                         </h3>
                         <p>Hours:</p>
@@ -201,7 +201,7 @@
                 </div>
             </div>
             <div class="row">
-                <ul class="breadcrumb col-xs-12" style="margin-bottom: 0; border-radius: 0;">
+                <ul class="breadcrumb col-xs-12" style="border-radius: 0;">
                     <li>
                         <i class="fa fa-star"></i>
                         <i class="fa fa-star"></i>
@@ -212,8 +212,8 @@
                     <li>Place Subtitle</li>
                 </ul>
             </div>
-            <div class="row" style="margin-top: 16px;">
-                <div class="col-xs-12 col-md-6">
+            <div class="row">
+                <div class="col-xs-12 col-lg-6">
                     
                     <div class="panel panel-primary">
                         <div class="panel-heading text-center">
@@ -256,10 +256,7 @@
                             </div>
                         </div>
                     </div>
-                    
-                </div>
-                <div class="col-xs-12 col-md-6">
-                    
+
                     <div class="panel panel-warning">
                         <div class="panel-heading text-center">
                             <h3 class="panel-title">
@@ -302,8 +299,8 @@
                     </div>
                     
                 </div>
-                <div class="col-xs-12">
-                    
+
+                <div class="col-xs-12 col-lg-6">
                     <div class="panel panel-danger">
                         <div class="panel-heading text-center">
                             <h3 class="panel-title">
@@ -323,17 +320,76 @@
                             </div>
                             
                         </div>
-                    </div>
-                    
+                    </div>                    
+                    <div class="panel panel-danger">
+                        <div class="panel-heading text-center">
+                            <h3 class="panel-title">
+                                <strong>Knock Knock</strong>
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            
+                            <div class="row" style="margin-bottom: 10px;">
+                                <div class="col-xs-12">
+                                    
+                                    <button id="not-open" type="button" class="btn btn-lg btn-default col-xs-12 col-sm-12"  data-toggle="modal" data-target="#modal-reported">
+                                        <strong>Let Me In!</strong>
+                                    </button>
+                                    
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>                    
+                    <div class="panel panel-danger">
+                        <div class="panel-heading text-center">
+                            <h3 class="panel-title">
+                                <strong>Knock Knock</strong>
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            
+                            <div class="row" style="margin-bottom: 10px;">
+                                <div class="col-xs-12">
+                                    
+                                    <button id="not-open" type="button" class="btn btn-lg btn-default col-xs-12 col-sm-12"  data-toggle="modal" data-target="#modal-reported">
+                                        <strong>Let Me In!</strong>
+                                    </button>
+                                    
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>                    
+                    <div class="panel panel-danger">
+                        <div class="panel-heading text-center">
+                            <h3 class="panel-title">
+                                <strong>Knock Knock</strong>
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            
+                            <div class="row" style="margin-bottom: 10px;">
+                                <div class="col-xs-12">
+                                    
+                                    <button id="not-open" type="button" class="btn btn-lg btn-default col-xs-12 col-sm-12"  data-toggle="modal" data-target="#modal-reported">
+                                        <strong>Let Me In!</strong>
+                                    </button>
+                                    
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>                    
                 </div>
             </div>
         </div>
         
-        <script src="{{ static_url('assets/npm/jquery/dist/jquery.min.js') }}"></script>
+        <script src="{{ static_url('assets/jquery/dist/jquery.min.js') }}"></script>
         
-        <script src="{{ static_url('assets/npm/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+        <script src="{{ static_url('assets/bootstrap/dist/js/bootstrap.min.js') }}"></script>
         
-        <script src="{{ static_url('assets/npm/leaflet/dist/leaflet.js') }}"></script>
+        <script src="{{ static_url('assets/leaflet/dist/leaflet.js') }}"></script>
         
         <script src="{{ static_url('assets/js/geohash.js') }}"></script>
         
